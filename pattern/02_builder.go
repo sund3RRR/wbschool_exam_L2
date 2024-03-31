@@ -6,6 +6,24 @@ package pattern
 	https://en.wikipedia.org/wiki/Builder_pattern
 */
 
+// Основная цель паттерна "Строитель" состоит в создании объекта пошагово.
+// Этот паттерн позволяет создавать различные конфигурации объекта,
+// избегая перегрузки конструктора с большим числом параметров и
+// обеспечивая более гибкую и интуитивно понятную конфигурацию.
+//
+// Плюсы:
+// - Гибкость и расширяемость. Позволяет создавать различные варианты объектов
+// без изменения его структуры.
+// - Избегание перегрузки конструктора. Избегает проблемы с большим числом параметров конструктора,
+// что улучшает его читаемость и поддерживаемость.
+//
+// Минусы:
+// - Усложнение кода/ Для каждого типа объекта может потребоваться создание отдельного строителя,
+// что может усложнить структуру кода.
+// - Дублирование кода. Некоторая часть кода может дублироваться между различными строителями,
+// если они создают объекты с похожей структурой.
+
+// Main object that needs to build
 type LinuxDistribution struct {
 	Name               string
 	Kernel             string
@@ -15,6 +33,7 @@ type LinuxDistribution struct {
 	Version            string
 }
 
+// Builde interface
 type ILinuxBuilder interface {
 	AddName(name string) ILinuxBuilder
 	AddKernel(kernel string) ILinuxBuilder
@@ -25,6 +44,7 @@ type ILinuxBuilder interface {
 	Build() *LinuxDistribution
 }
 
+// Builder
 type LinuxBuilder struct {
 	name               string
 	kernel             string
@@ -34,6 +54,7 @@ type LinuxBuilder struct {
 	version            string
 }
 
+// Builder's constructor
 func NewLinuxBuilder() ILinuxBuilder {
 	return &LinuxBuilder{}
 }
@@ -77,16 +98,19 @@ func (b *LinuxBuilder) Build() *LinuxDistribution {
 	}
 }
 
+// Director for builder
 type LinuxDirector struct {
 	b ILinuxBuilder
 }
 
+// Director's constructor
 func NewLinuxDirector(b ILinuxBuilder) *LinuxDirector {
 	return &LinuxDirector{
 		b: b,
 	}
 }
 
+// One of the director's methods
 func (d *LinuxDirector) BuildUbuntu() *LinuxDistribution {
 	return d.b.AddKernel("5.15.160").
 		AddName("ubuntu").
@@ -99,6 +123,7 @@ func (d *LinuxDirector) BuildUbuntu() *LinuxDistribution {
 		Build()
 }
 
+// One of the director's methods
 func (d *LinuxDirector) BuildArch() *LinuxDistribution {
 	return d.b.AddKernel("6.8").
 		AddName("arch").
