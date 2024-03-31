@@ -108,3 +108,11 @@ func (rs *ResourceService) freeResources(pid int) {
 //
 // ResourceService
 //
+
+// Example usage
+//
+// func main() {
+// 	osFacade := pattern.NewProgramFacade(53453, 3, 2048)
+
+// 	osFacade.ShutdownProcess()
+// }
