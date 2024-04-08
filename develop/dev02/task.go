@@ -28,12 +28,16 @@ import (
 */
 
 func UnpackString(str string) (string, error) {
+	// Check if string is empty, then return string
 	if len(str) == 0 {
 		return str, nil
 	}
 
+	// Convert string to array of runes because some unicode symbols
+	// can be presented as multiple bytes
 	arr := []rune(str)
 
+	// Check if string starts with number, so return error
 	if unicode.IsDigit(arr[0]) {
 		return "", errors.New("Bad string")
 	}
@@ -43,6 +47,7 @@ func UnpackString(str string) (string, error) {
 
 	for _, c := range arr {
 		if unicode.IsDigit(c) {
+			// If char is digit, then grow buffer and write last char n count
 			count, _ := strconv.Atoi(string(c))
 
 			builder.Grow(count)
@@ -52,9 +57,12 @@ func UnpackString(str string) (string, error) {
 			}
 			char = 0
 		} else if char != 0 {
+			// If char is letter and last char is presented, then it means that it is a single char,
+			// so write it to buffer
 			builder.WriteRune(char)
 			char = c
 		} else {
+			// If last char is not presented, then just set last char
 			char = c
 		}
 	}
