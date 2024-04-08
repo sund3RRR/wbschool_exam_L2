@@ -38,11 +38,11 @@ func TestUnpackString(t *testing.T) {
 		t.Run(test.str, func(t *testing.T) {
 			got, err := UnpackString(test.str)
 			if (err != nil) != test.wantErr {
-				t.Errorf("UnpackString() error = #{err}, wantErr = #{test.wantErr}")
+				t.Errorf("UnpackString() error = %v, wantErr = %v", err, test.wantErr)
 				return
 			}
 			if got != test.want {
-				t.Errorf("UnpackString() got = #{got}, want = #{test.want}")
+				t.Errorf("UnpackString() got = %s, want = %s", got, test.want)
 			}
 		})
 	}
