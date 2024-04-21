@@ -1,5 +1,13 @@
 package main
 
+import (
+	"fmt"
+	"os"
+	"time"
+
+	"github.com/beevik/ntp"
+)
+
 /*
 === Базовая задача ===
 
@@ -12,6 +20,28 @@ package main
 Программа должна проходить проверки go vet и golint.
 */
 
-func main() {
+type NtpServer struct {
+	host string
+}
 
+func NewNtpServer(host string) *NtpServer {
+	return &NtpServer{
+		host: host,
+	}
+}
+
+func (s *NtpServer) GetTime() (time.Time, error) {
+	return ntp.Time(s.host)
+}
+
+func main() {
+	server := NewNtpServer("0.beevik-ntp.pool.ntp.org")
+
+	time, err := server.GetTime()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println(time.Format("2006-01-02 15:04:05 -07:00:00"))
 }
