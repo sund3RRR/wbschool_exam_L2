@@ -1,5 +1,11 @@
 package main
 
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
 /*
 === Взаимодействие с ОС ===
 
@@ -14,6 +20,28 @@ package main
 Программа должна проходить все тесты. Код должен проходить проверки go vet и golint.
 */
 
-func main() {
+func shellEventLoop(shell *Shell) {
+	scanner := bufio.NewScanner(shell.in)
 
+	for {
+		dir := shell.SerializePath(shell.currentDir)
+
+		fmt.Fprintf(shell.out, "btrsh %s %% ", dir)
+		scanner.Scan()
+		command := scanner.Text()
+
+		output := shell.HandleCommand(command)
+
+		fmt.Fprintf(shell.out, "%s", output)
+	}
+}
+
+func main() {
+	shell, err := NewShell()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	shellEventLoop(shell)
 }
