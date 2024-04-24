@@ -1,5 +1,11 @@
 package main
 
+import (
+	"fmt"
+	"log"
+	"net/http"
+)
+
 /*
 === HTTP server ===
 
@@ -23,5 +29,24 @@ package main
 */
 
 func main() {
+	cfg := NewConfig()
 
+	db, err := NewDatabase(cfg.DataPath)
+	if err != nil {
+		log.Fatalf("Failed to start database: %v", err)
+	}
+
+	handler := NewHandlerController(db)
+
+	http.Handle("/create_event", loggingWrapper(http.HandlerFunc(handler.createEvent)))
+	http.Handle("/update_event", loggingWrapper(http.HandlerFunc(handler.updateEvent)))
+	http.Handle("/delete_event", loggingWrapper(http.HandlerFunc(handler.deleteEvent)))
+	http.Handle("/events_for_day", loggingWrapper(http.HandlerFunc(handler.getDayEvents)))
+	http.Handle("/events_for_week", loggingWrapper(http.HandlerFunc(handler.getWeekEvents)))
+	http.Handle("/events_for_month", loggingWrapper(http.HandlerFunc(handler.getMonthEvents)))
+
+	err = http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", cfg.Port), nil)
+	if err != nil {
+		log.Fatalf("Failed to start HTTP server: %v", err)
+	}
 }
